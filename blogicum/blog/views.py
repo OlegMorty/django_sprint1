@@ -1,5 +1,7 @@
 from django.shortcuts import render
 
+from django.http import Http404
+
 
 posts: list = [
     {
@@ -46,16 +48,24 @@ posts: list = [
 
 
 def index(request):
-    context = {'posts': reversed(posts)}
-    return render(request, 'blog/index.html', context=context)
+    return render(
+        request,
+        'blog/index.html',
+        context={'posts': reversed(posts)})
 
 
-def post_detail(request, id):
-    post = posts[int(id)]
-    context = {'post': post}
-    return render(request, 'blog/detail.html', context=context)
+def post_detail(request, post_id):
+    posts_by_id = {post['id']: post for post in posts}
+    if post_id not in posts_by_id:
+        raise Http404(f'Указанного id:{post_id} поста не существует')
+    return render(
+        request,
+        'blog/detail.html',
+        context={'post': posts_by_id[post_id]})
 
 
 def category_posts(request, category_slug):
-    context = {'category_slug': category_slug}
-    return render(request, 'blog/category.html', context=context)
+    return render(
+        request,
+        'blog/category.html',
+        context={'category_slug': category_slug})
