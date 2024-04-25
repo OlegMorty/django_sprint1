@@ -1,6 +1,5 @@
-from django.shortcuts import render
-
 from django.http import Http404
+from django.shortcuts import render
 
 
 posts: list = [
@@ -46,6 +45,8 @@ posts: list = [
     },
 ]
 
+posts_by_id = {post['id']: post for post in posts}
+
 
 def index(request):
     return render(
@@ -55,7 +56,6 @@ def index(request):
 
 
 def post_detail(request, post_id):
-    posts_by_id = {post['id']: post for post in posts}
     if post_id not in posts_by_id:
         raise Http404(f'Указанного id:{post_id} поста не существует')
     return render(
